@@ -1,16 +1,23 @@
+import math
 class QueueElement:
-    storiesPerDay = 10
-    def __init__(self, writer_id, remainingStoryIds, storiesPerDay):
+    def __init__(self, writer_id, remainingStoryIds, storiesPerDay, maxStoryCount):
         self.__remainingStoryIds = remainingStoryIds
         self.storiesPerDay = storiesPerDay
+        self.__timeImportance = (float(len(remainingStoryIds)) / maxStoryCount)
         self.__doneStoryIds = []
         self.__storiesToday = 0
         self.__totalDaysWaited = 0
         self.__daysWaited = 0
-        self.__writer_id = writer_id
+        self.writer_id = writer_id
 
     def get_remaining_stories_count(self):
         return len(self.__remainingStoryIds)
+
+    def get_done_stories_count(self):
+        return len(self.__doneStoryIds)
+
+    def get_total_stories_count(self):
+        return self.get_done_stories_count() + self.get_remaining_stories_count()
     
     def get_story_id(self):
         if len(self.__remainingStoryIds) == 0:
@@ -30,19 +37,19 @@ class QueueElement:
     def __get_days_waited_contribution(self):
         if self.__daysWaited == 0:
             return 0
-        return -1 * pow(2, self.__daysWaited)
+        return -1 * int(pow(1 + self.__timeImportance, self.__daysWaited))
 
     def __get_stories_today_contribution(self):
-        return int(round((self.__storiesToday / self.storiesPerDay) * 100))
+        return int(round((float(self.__storiesToday) / self.storiesPerDay) * 100))
 
-    def __get_percentage_completed(self):
-        return int(round(( len(self.__doneStoryIds) / ( len(self.__doneStoryIds) + len(self.__remainingStoryIds) ) ) * 100))
+    def get_percentage_completed(self):
+        return int(round(( float(len(self.__doneStoryIds)) / ( len(self.__doneStoryIds) + len(self.__remainingStoryIds) ) ) * 100))
 
     def get_priority(self):
-        return self.__get_percentage_completed() + self.__get_days_waited_contribution() + self.__get_stories_today_contribution()
+        return self.get_percentage_completed() + self.__get_days_waited_contribution() + self.__get_stories_today_contribution()
 
     def get_average_wait_time(self):
-        return self.__totalDaysWaited / len(self.__doneStoryIds)
+        return 0 if len(self.__doneStoryIds) == 0 else float(self.__totalDaysWaited) / len(self.__doneStoryIds)
 
     def __str__(self):
-        return "Writer: " + self.__writer_id + "\nValues:\n" + str(self.__remainingStoryIds)
+        return "\nW: " + self.writer_id + "\nP: " + str(self.get_priority()) + "\nD: " + str(self.get_done_stories_count()) + " R: " + str(self.get_remaining_stories_count()) + ", P: " + str(self.get_percentage_completed()) + "%\nW: " + str(self.get_average_wait_time())
