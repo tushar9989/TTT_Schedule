@@ -57,11 +57,13 @@ It is (Stories Today / Total Stories Each Day) * 100. It can range between 0 and
 
 - Whenever we pick a writer from the queue their days waited is reset to 0 and stories published today is incremented.
 
-- We then pick a story from the writers remaining stories and publish that.
+- We then pick a story from the writer's remaining stories and publish that.
 
-- After publishing the story if the writer still has stories remaining they are added back to the queue.
+- After publishing the story if the writer still has stories remaining the writer is added back to the queue.
 
 - At the end of each day all the writers that have not had any stories published that day have their days waited incremented. Stories today is reset to 0 for writers that have had their stories published.
+
+- The queue is then reinitialized with the updated writer objects and sorted by priority.
 
 ## How does your algorithm work towards minimizing unhappiness and also maximizing overall happiness at the same time?
 
