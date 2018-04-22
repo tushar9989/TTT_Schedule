@@ -1,9 +1,9 @@
 import math
 class QueueElement:
-    def __init__(self, writer_id, remainingStoryIds, storiesPerDay, maxStoryCount):
+    def __init__(self, writer_id, remainingStoryIds, storiesPerDay, timeImportance):
         self.__remainingStoryIds = remainingStoryIds
         self.storiesPerDay = storiesPerDay
-        self.__timeImportance = (float(len(remainingStoryIds)) / maxStoryCount)
+        self.__timeImportance = timeImportance
         self.__doneStoryIds = []
         self.__storiesToday = 0
         self.__totalDaysWaited = 0
@@ -37,7 +37,7 @@ class QueueElement:
     def __get_days_waited_contribution(self):
         if self.__daysWaited == 0:
             return 0
-        return -1 * int(pow(1 + self.__timeImportance, self.__daysWaited))
+        return -1 * int(pow(1.585, self.__daysWaited) * self.__timeImportance)
 
     def __get_stories_today_contribution(self):
         return int(round((float(self.__storiesToday) / self.storiesPerDay) * 100))

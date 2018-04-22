@@ -1,14 +1,27 @@
 import csv
 import sys
-from collections import defaultdict
+from collections import Set, OrderedDict, defaultdict
 from QueueElement import QueueElement
 from HeapWrapper import HeapWrapper
+
+def calculateLengthToPercentile(writerToTalesList):
+    percentile = set()
+
+    for key, value in writerToTalesList:
+        percentile.add(len(value))
+    percentile = sorted(percentile)
+
+    maxIndex = len(percentile) - 1
+    lengthToPercentile = defaultdict()
+    for i in range(0, len(percentile)):
+        lengthToPercentile[percentile[i]] = (float(i) / maxIndex)
+    return lengthToPercentile
 
 storiesPerDay = 10
 days = 30
 totalStoriesCount = 0
 verbose = False
-writerToTalesMap = defaultdict(list)
+writerToTalesMap = OrderedDict()
 with open('data.csv', 'rb') as csvFile:
     spamReader = csv.reader(csvFile)
     for row in spamReader:
@@ -18,10 +31,13 @@ with open('data.csv', 'rb') as csvFile:
         totalStoriesCount = max(
             totalStoriesCount, len(writerToTalesMap[row[0]]))
 
+writerToTalesList = writerToTalesMap.items()
+lengthToPercentile = calculateLengthToPercentile(writerToTalesList)
+
 doneElements = []
 heap = HeapWrapper(key=lambda element: element.get_priority())
-for key, value in sorted(writerToTalesMap.items(), key=lambda (k, v): len(v)):
-    heap.push(QueueElement(key, value, storiesPerDay, totalStoriesCount))
+for key, value in writerToTalesList:
+    heap.push(QueueElement(key, value, storiesPerDay, lengthToPercentile[len(value)]))
 
 for i in range(0, days):
     print "\n\nDay " + str(i + 1) + ":"
